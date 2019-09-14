@@ -1,5 +1,8 @@
 #include "windows.h"
 #include <array>
+#include <future>
+#include <thread>
+
 
 const char g_szClassName[] = "myWindowClass";
 const int arraySize = 60;
@@ -39,9 +42,8 @@ void bubleSort(HWND windowHandler) {
 		for (size_t j = 0; j < unsortedArray.size() - 1; j++){
 			if (unsortedArray[j] > unsortedArray[j + 1]) {
 				swap(&unsortedArray[j], &unsortedArray[j + 1]);
-				InvalidateRect(windowHandler, 0, TRUE);
+				RedrawWindow(windowHandler, NULL, NULL, RDW_ERASE | RDW_INVALIDATE);
 				Sleep(50);
-				return;
 			}
 		}
 	}
@@ -135,12 +137,12 @@ int WINAPI WinMain(
 
 	ShowWindow(windowHandler, nCmdShow);
 
+	auto future = std::async(bubleSort, windowHandler);
 
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
-		bubleSort(windowHandler);
 	}
 	return Msg.wParam;
 }
