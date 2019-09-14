@@ -11,9 +11,11 @@ const int windowHeight = 600;
 const int windowWidth = 800;
 int drawableHeight;
 int drawableWidth;
+int currentElement;
 
 void drawArraySort(HDC hDC) {
 	HBRUSH blueBrush = CreateSolidBrush(RGB(0, 0, 255));
+	HBRUSH redBrush = CreateSolidBrush(RGB(255, 0, 0));
 	HBRUSH blackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 	for (size_t i = 0; i < unsortedArray.size(); i++) {
@@ -26,7 +28,14 @@ void drawArraySort(HDC hDC) {
 			drawableHeight
 		};
 
-		FillRect(hDC, &rect, blueBrush);
+		if (i == currentElement)
+		{
+			FillRect(hDC, &rect, redBrush);
+		}
+		else {
+			FillRect(hDC, &rect, blueBrush);
+		}
+
 		FrameRect(hDC, &rect, blackBrush);
 	}
 }
@@ -40,6 +49,7 @@ void swap(int *xp, int *yp) {
 void bubleSort(HWND windowHandler) {
 	for (size_t i = 0; i < unsortedArray.size(); i++){
 		for (size_t j = 0; j < unsortedArray.size() - 1; j++){
+			currentElement = j + 1;
 			if (unsortedArray[j] > unsortedArray[j + 1]) {
 				swap(&unsortedArray[j], &unsortedArray[j + 1]);
 				RedrawWindow(windowHandler, NULL, NULL, RDW_ERASE | RDW_INVALIDATE);
@@ -56,8 +66,7 @@ void fillArray() {
 	}
 }
 
-LRESULT CALLBACK WndProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK WndProc(HWND windowHandler, UINT msg, WPARAM wParam, LPARAM lParam){
 	switch (msg)
 	{
 	case WM_CLOSE:
